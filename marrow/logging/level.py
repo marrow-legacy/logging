@@ -21,8 +21,8 @@ class LoggingLevel(NamedTuple):
     _registry = {}
     
     def __init__(self, *args, **kw):
+        self._registry[self.name.lower()] = self
         super(LoggingLevel, self).__init__(*args, **kw)
-        self._registry[self.name] = self
     
     def __repr__(self):
         return 'LoggingLevel({0}, {1})'.format(self.level, self.name)
@@ -40,7 +40,7 @@ for level, name in enumerate(('DEBUG', 'INFO', 'NOTICE', 'WARNING', 'ERROR', 'CR
     __all__.append(name)
 
 # Disabled is a special case as it must be above everything else.
-DISABLED = LoggingLevel('DISABLED', 99)
+DISABLED = LoggingLevel(99, 'DISABLED')
 
 # Clean up.
 del level, name

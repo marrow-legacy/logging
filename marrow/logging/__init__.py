@@ -1,11 +1,39 @@
 # encoding: utf-8
 
-import marrow.logging.level
+import level
 
 from marrow.logging.message import Message
+from level import *
+from marrow.logging.log import Log
 
-from marrow.logging.level import *
+
+__all__ = ['Log', 'Message'] + level.__all__ + ['log']
 
 
-__all__ = ['Message'] + marrow.logging.level.__all__
+log = Log()
 
+
+
+"""
+
+log.debug("Foo!")
+log.error("Bar!")
+log.info('{0} is having issues in {where}.', 'GothAlice', where='sector 27')
+
+baz = log.name('baz')
+baz.debug('Diz!')
+
+log.info('user\ninput\nannoys\nus')
+log.options(newlines=True).info('we\ndeal')
+
+try:
+    1/0
+except:
+    log.trace('error', prefix="\n").warning('oh noes')
+
+log.fields(path="less traveled", roads=42).info('Going for a walk')
+
+# Log only fields -- no positional arguments.
+log.info(paths=42, dolphins='thankful')
+
+"""

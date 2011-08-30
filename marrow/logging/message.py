@@ -8,7 +8,7 @@ from marrow.util.bunch import Bunch
 from marrow.util.tuple import NamedTuple
 
 
-__all__ = [Message]
+__all__ = ['Message']
 
 
 class Message(NamedTuple):
