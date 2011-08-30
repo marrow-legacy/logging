@@ -62,7 +62,10 @@ class Log(NamedTuple):
         
         return log
     
-    def trace(self, trace="error", prefix=None):
+    def exceptions(self, trace="error", prefix=None):
+        if trace is True:
+            trace = "error"
+        
         if prefix:
             self = self.options(prefix=prefix)
         

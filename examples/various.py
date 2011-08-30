@@ -17,7 +17,10 @@ log.options(newlines=False).info('we\ndeal')
 try:
     1/0
 except:
-    log.trace('error', prefix="\n").warning('oh noes')
+    log.exceptions('error', prefix="\n").warning('oh noes')
+    # The above can be simplified to log.exceptions()...
+    # As exceptions are off by default, calling this method
+    # enables them by default.
 
 # additional data
 log.data(path="less traveled", roads=42).info('Going for a walk')
