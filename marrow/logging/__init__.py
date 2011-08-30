@@ -10,7 +10,7 @@ from marrow.logging.log import Log
 __all__ = ['Log', 'Message'] + level.__all__ + ['log']
 
 
-log = Log()
+log = Log(data={'name': '-'})
 
 
 
@@ -31,7 +31,7 @@ try:
 except:
     log.trace('error', prefix="\n").warning('oh noes')
 
-log.fields(path="less traveled", roads=42).info('Going for a walk')
+log.data(path="less traveled", roads=42).info('Going for a walk')
 
 # Log only fields -- no positional arguments.
 log.info(paths=42, dolphins='thankful')

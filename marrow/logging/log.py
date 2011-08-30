@@ -1,11 +1,17 @@
 # encoding: utf-8
 
+import os
+import datetime
+import threading
+
 from functools import partial
 
 from marrow.util.bunch import Bunch
 from marrow.util.tuple import NamedTuple
 
 from marrow.logging.level import LoggingLevel
+from marrow.logging.formats import LineFormat
+from marrow.logging.message import Message
 
 
 __all__ = ['Log']
@@ -17,7 +23,7 @@ class Log(NamedTuple):
     _fields = ('_data', '_options', 'level')
     
     def __new__(cls, data=None, options=None, level=None):
-        data = Bunch(data) if data is not None else Bunch()
+        data = Bunch(data) if data is not None else Bunch(name=None)
         options = Bunch(options) if options is not None else Bunch()
         level = level if level is not None else LoggingLevel._registry['debug']
         
@@ -46,7 +52,6 @@ class Log(NamedTuple):
     
     def data(self, **kw):
         log = Log(*self)
-        print dir(log)
         log._data.update(kw)
         
         return log
@@ -57,7 +62,10 @@ class Log(NamedTuple):
         
         return log
     
-    def trace(self, trace="error"):
+    def trace(self, trace="error", prefix=None):
+        if prefix:
+            self = self.options(prefix=prefix)
+        
         return self.options(trace=trace)
     
     def emit(self, level, template=None, *args, **kw):
@@ -69,5 +77,28 @@ class Log(NamedTuple):
         if level < self.level:
             return
         
-        if template:
-            print "{0}:{1}".format(level.name, template.format(*args, **kw))
+        if not template and args:
+            raise TypeError("Positional arguments may only be used if a template is specified.")
+        
+        # Step one, find the appropriate formatter.
+        
+        # Step two, eliminate if the formatter level is greater than ours.
+        
+        # Step three, construct the message.
+        
+        data = Bunch(
+                now = datetime.datetime.now(),
+                thread = threading.currentThread().getName(),
+                pid = os.getpid(),
+                traceback = None
+            )
+        data.update(self._data)
+        
+        if not template:
+            data.update(kw)
+            kw.clear()
+        
+        message = Message(level, template, data, args, kw, self._options)
+        
+        # Step four, deliver.
+        LineFormat()(message)

@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-from __future__ import unicode_literals
+import sys
 
 import traceback
 
@@ -13,13 +13,13 @@ __all__ = ['Message']
 
 class Message(NamedTuple):
     __slots__ = ()
-    _fields = ('level', 'template', 'fields', 'args', 'kwargs', 'options')
+    _fields = ('template', 'data', 'args', 'kwargs', 'options')
     
-    def __init__(self, level=None, template=None, fields=None, args=None, kwargs=None, options=None):
+    def __new__(cls, level, template=None, data=None, args=None, kwargs=None, options=None):
         if template is None:
             template = ""
         
-        fields = Bunch(fields if fields is not None else {})
+        data = Bunch(data if data is not None else {})
         options = Bunch(options if options is not None else {})
         
         if args is None:
@@ -28,7 +28,7 @@ class Message(NamedTuple):
         if kwargs is None:
             kwargs = {}
         
-        fields.level = level
+        data.level = level
         
         if 'trace' in options:
             trace = options.get('trace')
@@ -36,13 +36,13 @@ class Message(NamedTuple):
             if trace == 'error':
                 tb = sys.exc_info()
                 if tb[0] is not None:
-                    fields.traceback = traceback.format_exc()
+                    data.traceback = traceback.format_exc()
             
             else:
                 # We assume a 3-tuple.
-                fields.traceback = traceback.format_exception(*trace)
+                data.traceback = traceback.format_exception(*trace)
         
-        super(Message, self).__init__(level, template, fields, args, kwargs, options)
+        return NamedTuple.__new__(cls, template, data, args, kwargs, options)
     
     def __str__(self):
         return self.template.format(*self.args, **self.kwargs)
