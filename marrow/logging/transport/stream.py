@@ -10,9 +10,9 @@ __all__ = ['StreamTransport']
 class StreamTransport(object):
     """Externally managed stream."""
     
-    __slots__ = ('stream', 'format')
+    __slots__ = ('lock', 'stream', 'format')
     
-    parallel = False
+    parallel = False # Note the additional 'lock' slot, above.
     
     def __init__(self, config):
         self.format = config.format

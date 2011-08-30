@@ -10,9 +10,9 @@ __all__ = ['StreamTransport']
 class FileTransport(object):
     """File-based logger."""
     
-    __slots__ = ('name', 'format', 'mode', 'buffer', 'file')
+    __slots__ = ('lock', 'name', 'format', 'mode', 'buffer', 'file')
     
-    parallel = False
+    parallel = False # Note the additional 'lock' slot, above.
     
     def __init__(self, config):
         self.name = config.name
