@@ -3,6 +3,7 @@
 from threading import Lock
 
 from marrow.util.bunch import Bunch
+from marrow.util.object import load_object
 
 from marrow.logging.level import LoggingLevel
 
@@ -14,7 +15,7 @@ __all__ = ['ChannelTransport']
 class ChannelTransport(object):
     """Chained callback transport."""
     
-    #__slots__ = ('format', 'identity', 'options', 'facility')
+    __slots__ = ('format', 'channels')
     
     parallel = True # Handle locking within your own callbacks.
     
@@ -23,12 +24,17 @@ class ChannelTransport(object):
         
         self.channels = Bunch()
         
-        for name in LoggingLevel._registry:
-            self.channels[name] = list()
-            # TODO: load up the channels from the config.
-        
-        self.channels.all = list()
-        # TODO: As above.
+        for name in list(LoggingLevel._registry) + ['all']:
+            _ = self.channels[name] = list()
+            
+            for channel in config.get(name):
+                try:
+                    c = load_object(channel['use'])
+                    channel.pop('use')
+                    _.append(c(Bunch(channel)))
+                
+                except AttributeError:
+                    _.append(channel)
     
     def startup(self):
         """Chain startup through to the channel transports."""
