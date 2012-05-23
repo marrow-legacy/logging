@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+from __future__ import print_function
+
 
 from marrow.util.bunch import Bunch
 
@@ -64,7 +66,7 @@ class LineFormat(object):
             text += options.prefix + ((data_.traceback if options.prefix == '\n' else \
                     data_.traceback.replace('\n', options.prefix))).strip()
         
-        print options.template.format(s=separator, message=message, text=text, data=data, **data_)
+        print(options.template.format(s=separator, message=message, text=text, data=data, **data_))
 
 
 class JsonFormat(object):

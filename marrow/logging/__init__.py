@@ -1,9 +1,7 @@
 # encoding: utf-8
 
-import level
-
 from marrow.logging.message import Message
-from level import *
+from marrow.logging.level import *
 from marrow.logging.log import Log
 
 
