@@ -27,6 +27,9 @@ class Log(NamedTuple):
         options = Bunch(options) if options is not None else Bunch()
         level = level if level is not None else LoggingLevel._registry['debug']
         
+        if 'formatter' not in options:
+            options.formatter = LineFormat()
+        
         return NamedTuple.__new__(cls, data, options, level)
     
     def __getattr__(self, name):
@@ -104,4 +107,4 @@ class Log(NamedTuple):
         message = Message(level, template, data, args, kw, self._options)
         
         # Step four, deliver.
-        LineFormat()(message)
+        self._options.formatter(message)

@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 
+import time
 
 from marrow.util.bunch import Bunch
 
@@ -25,13 +26,15 @@ class DateTimeProxy(object):
     def __getattr__(self, name):
         if name == 'iso':
             return self.dt.isoformat()
+        elif name == 'ts':
+            return "{0:.3f}".format(float(time.mktime(self.dt.timetuple())) + (self.dt.microsecond / 10**6))
         
         return self.dt.strftime(name)
 
 
 
 class LineFormat(object):
-    def __init__(self, template="{now.iso}{s}{level.name}{s}{name}{data}{s}{text}",
+    def __init__(self, template="{now.iso}{s}{level.name:>5}{s}{name:<8}{data}{s}{text}",
             separator=' ', prefix='\n', newlines=True):
         self.defaults = Bunch(
                 template = template,
