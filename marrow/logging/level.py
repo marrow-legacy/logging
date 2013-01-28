@@ -2,36 +2,49 @@
 
 from __future__ import unicode_literals
 
-from marrow.util.tuple import NamedTuple
+import sys
+
+from marrow.util.object import RichComparisonMixin
 
 
 __all__ = ['LoggingLevel', 'DISABLED']
 
 
+class LoggingLevel(RichComparisonMixin):
+    """A sortable logging level."""
 
-class LoggingLevel(NamedTuple):
-    """This describes a logging level using a named tuple for efficiency and to allow sorting.
-    
-    Interesting note:
-    Roughly 80 bytes of memory for each level (if the name is four characters long).
-    """
-    
-    __slots__ = ()
-    _fields = ('level', 'name')
+    __slots__ = ('level', 'name')
     _registry = {}
-    
-    def __init__(self, *args, **kw):
+
+    def __init__(self, level, name):
+        self.level = level
+        self.name = name
+
         self._registry[self.name.lower()] = self
-        super(LoggingLevel, self).__init__(*args, **kw)
-    
+        super(LoggingLevel, self).__init__()
+
     def __repr__(self):
         return 'LoggingLevel({0}, {1})'.format(self.level, self.name)
-    
+
     def __int__(self):
         return self.level
     
-    def __str__(self):
+    def __unicode__(self):
         return self.name
+    
+    def __bytes__(self):
+        return self.__unicode__.encode('ascii')
+    
+    if sys.version_info[0] == 2:
+        __str__ = __bytes__
+    else:
+        __str__ = __unicode__
+
+    def __eq__(self, other):
+        return int(self) == int(other)
+
+    def __lt__(self, other):
+        return int(self) < int(other)
 
 
 # Generate the default logging levels.
