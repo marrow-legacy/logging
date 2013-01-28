@@ -33,7 +33,7 @@ class LoggingLevel(RichComparisonMixin):
         return self.name
     
     def __bytes__(self):
-        return self.__unicode__.encode('ascii')
+        return self.__unicode__().encode('ascii')
     
     if sys.version_info[0] == 2:
         __str__ = __bytes__
